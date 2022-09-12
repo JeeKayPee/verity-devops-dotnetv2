@@ -1,0 +1,7 @@
+AWS_DEFAULT_REGION	  ap-south-1	                                                    PLAINTEXT
+IMAGE_REPO_NAME	      sample-ui-pipeline-v1	                                          PLAINTEXT
+IMAGE_TAG	            latest	                                                        PLAINTEXT
+AWS_ACCOUNT_ID	      570964220837	                                                  PLAINTEXT
+SONAR_SERVER	        http://ec2-65-2-160-125.ap-south-1.compute.amazonaws.com	      PLAINTEXT
+SONAR_LOGIN	          7644209eb2af3ca2478124f998d08d563a2a7b61	                      PLAINTEXT
+SONAR_PROJECT_KEY	    sample-ci-project-p6	                                          PLAINTEXT

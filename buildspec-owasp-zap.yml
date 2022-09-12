@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+        docker: 20
+  pre_build:
+    commands:
+      - echo Running OWASP ZAP Test...
+  build:
+    commands:
+      - echo ${PWD}
+      - chmod 777 ${PWD}
+      - docker run -v ${PWD}/:/zap/wrk/:rw -t owasp/zap2docker-weekly zap-baseline.py -t $APP_URL -r testreport.html 2> /dev/null; (($? == 2)) && echo 'Done' >&2
+  post_build:
+    commands:
+      - aws s3 cp testreport.html s3://indoqbx-zap-reports/
+      - echo OWASP ZAP Test completed on `date`

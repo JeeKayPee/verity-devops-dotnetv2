@@ -1,0 +1,19 @@
+﻿@page
+@model IndexModel
+@{
+    
+    /** Sucess */
+    ViewData["Title"] = "Home page";
+
+    /** Fail */
+    //ViewData["Title"] = "Dummy Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>To Training Session for DotNet Code Pipeline</p>
+    <h4>API Sample Endpoint</h4>
+    <a href='/api/TestEndpoint'>GET</a>
+    <br/>
+     <a href='/api/TestEndpoint/5'>GET BY ID</a>
+</div>

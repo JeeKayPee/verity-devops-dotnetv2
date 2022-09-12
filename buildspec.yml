@@ -1,0 +1,51 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - /usr/local/bin/dotnet-install.sh --channel LTS
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - dotnet tool install --global dotnet-sonarscanner
+      
+  build:
+    commands:
+      - echo Running Unit Test cases
+      - dotnet test -c Release --logger trx --results-directory ./testresults
+      - echo Unit Test cases execution completed
+
+
+      - echo Running Static Code Analaysis
+      - dotnet sonarscanner begin /k:"$SONAR_PROJECT_KEY" /d:sonar.host.url="$SONAR_SERVER"  /d:sonar.login="$SONAR_LOGIN"
+      - dotnet build
+      
+      - dotnet sonarscanner end /d:sonar.login="$SONAR_LOGIN"
+      - curl -s -u "${SONAR_LOGIN}:" ${SONAR_SERVER}/api/qualitygates/project_status?projectKey=${SONAR_PROJECT_KEY} >sonarresult.json
+      - cat sonarresult.json
+      - if [ $(jq -r '.projectStatus.status' sonarresult.json) = ERROR ] ; then $CODEBUILD_BUILD_SUCCEEDING -eq 0 ; echo failed;exit 1;fi
+    
+
+      - echo Build started on `date`
+      - echo Building the Docker image... >> $IMAGE_REPO_NAME:$IMAGE_TAG        
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+  post_build:
+    commands:
+      - test "$CODEBUILD_BUILD_SUCCEEDING" = "1"
+      - echo Build completed on `date`
+      - echo Pushing the Docker image... $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - printf '[{"name":"AppContainerDefinition","imageUri":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
+reports:
+    DotnetTestExamples:
+        file-format: VisualStudioTrx
+        files:
+            - '**/*'
+        base-directory: './testresults'
