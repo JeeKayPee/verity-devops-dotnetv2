@@ -14,5 +14,5 @@ phases:
       - docker run -v ${PWD}/:/zap/wrk/:rw -t owasp/zap2docker-weekly zap-baseline.py -t $APP_URL -r testreport.html 2> /dev/null; (($? == 2)) && echo 'Done' >&2
   post_build:
     commands:
-      - aws s3 cp testreport.html s3://indoqbx-zap-reports/
+      - aws s3 cp testreport.html s3://$S3_REPORT_BUCKET/
       - echo OWASP ZAP Test completed on `date`

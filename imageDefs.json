@@ -1,2 +1,3 @@
 
-  [{"name":"Prod-Container","imageUri":"indqbx.jfrog.io/indoqbx-sample-ui/indoqbx-sample-ui:latest"}]
+  [{"name":"AppContainerDefinition","imageUri":"gpvs.jfrog.io/gaurav123/gaurav123:latest"}]
+

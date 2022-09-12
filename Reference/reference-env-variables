@@ -1,0 +1,7 @@
+AWS_DEFAULT_REGION	  us-west-2 <<The region in which you are working>>
+IMAGE_REPO_NAME	      testenv <<The image name. We can pick it from  Amazon ECR -> Repositories>>
+IMAGE_TAG	            latest	<<There is no need to hardcode the image tag. We can use latest>>
+AWS_ACCOUNT_ID	      569045827250 <<Your AWS ID>>
+SONAR_SERVER	        http://54.242.208.150:9000	<<Public IP/DNS of Sonar Server. We have to prefer http:// and suffix port 9000>>
+SONAR_LOGIN	          sqp_38441012f811f38635986bd4f6ecaf938e9e9f0d <<The generated token in Sonar>>
+SONAR_PROJECT_KEY	    proj-sonar-gaurav << The project we have created in SonarQube>>
