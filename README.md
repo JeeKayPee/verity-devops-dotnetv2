@@ -1,0 +1,1 @@
+# verity-devops-dotnetv2
